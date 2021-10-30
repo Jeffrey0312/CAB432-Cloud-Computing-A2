@@ -31,14 +31,16 @@ router.get('/', function (req, res, next) {
             }
         });
     const weatherRequest = axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${query}&appid=40280448ac5cd05b973956bf4a7fc3a6&units=metric`);
-    const YoutubeRequest = axios.get(`https://www.googleapis.com/youtube/v3/search?key=AIzaSyAdyX8Jls13ZaxqmeuLbAhJ0bM3XfMz1tM&part=snippet&q=${query}&maxResults=5`);
+    // const YoutubeRequest = axios.get(`https://www.googleapis.com/youtube/v3/search?key=AIzaSyAdyX8Jls13ZaxqmeuLbAhJ0bM3XfMz1tM&part=snippet&q=${query}&maxResults=5`);
+    const FilckrRequest = axios.get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=54e758d3ed2d6cd76738e5da2c76557b&tags=${query}&has_geo=1&format=json&nojsoncallback=1&per_page=12&media=photo`);
 
-    axios.all([twitterRequest, weatherRequest, YoutubeRequest]) //weatherRequest
+
+    axios.all([twitterRequest, weatherRequest, FilckrRequest]) //weatherRequest
         .then(
             axios.spread((...responses) => {
                 const responseOne = "Recommendation ID in twitter:" + responses[0].data.meta.newest_id;
                 const responseTwo = "The temperature of country:" + responses[1].data.main.temp;
-                const responseThree = "Recommendation ID in Youtube:" + responses[2].data.items[0].id.videoId;
+                const responseThree = "The number of Photo Flickr:" + responses[2].data.photos.total;
                 // use/access the results
                 console.log(responseOne, responseTwo, responseThree); //rsponseTwo
                 const body = JSON.stringify({ source: 'S3 Bucket', ...responseOne + responseTwo + responseThree });
@@ -52,7 +54,7 @@ router.get('/', function (req, res, next) {
                 res.render('../views/result.pug', { ///Users/kwanhyunkim/Desktop/assignment/views/result.pug
                     twitter: responseOne,
                     weather: responseTwo,
-                    youtube: responseThree
+                    flickr: responseThree
                 })
             }));
 
@@ -75,7 +77,9 @@ router.get('/api/search', (req, res) => {
             }
         });
     const weatherRequest = axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${query}&appid=40280448ac5cd05b973956bf4a7fc3a6&units=metric`);
-    const YoutubeRequest = axios.get(`https://www.googleapis.com/youtube/v3/search?key=AIzaSyAdyX8Jls13ZaxqmeuLbAhJ0bM3XfMz1tM&part=snippet&q=${query}&maxResults=5`);
+    // const YoutubeRequest = axios.get(`https://www.googleapis.com/youtube/v3/search?key=AIzaSyAdyX8Jls13ZaxqmeuLbAhJ0bM3XfMz1tM&part=snippet&q=${query}&maxResults=5`);
+    const FilckrRequest = axios.get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=54e758d3ed2d6cd76738e5da2c76557b&tags=${query}&has_geo=1&format=json&nojsoncallback=1&per_page=12&media=photo`);
+
     const params = { Bucket: bucketName, Key: s3Key };
 
     const s3 = new AWS.S3({
@@ -88,12 +92,12 @@ router.get('/api/search', (req, res) => {
     });
     s3.headObject(params, (err, data) => {
         if (data == null) {
-            axios.all([twitterRequest, weatherRequest, YoutubeRequest]) //weatherRequest
+            axios.all([twitterRequest, weatherRequest, FilckrRequest]) //weatherRequest
                 .then(
                     axios.spread((...responses) => {
                         const responseOne = responses[0].data.meta.newest_id;
                         const responseTwo = responses[1].data.main.temp;
-                        const responseThree = responses[2].data.items[0].id.videoId;
+                        const responseThree = responses[2].data.photos.total;
                         const body = JSON.stringify({ source: 'S3 Bucket', ...responseOne + responseTwo + responseThree });
                         const objectParams = { Bucket: bucketName, Key: query, Body: body };
                         const uploadPromise = new AWS.S3({ apiVersion: '2006-03-01' }).putObject(objectParams).promise();
