@@ -21,8 +21,8 @@
  /* GET home page. */
  app.get('/', (req, res) => {
      const str = '<!DOCTYPE html>' + '<html><head><title>Assignment 2</title></head>' + '<body>' +
-     '<h1>' + 'Assignment 2' + '</h1>' +
-     '<li>User can search weather and location together! </li>' +
+     '<h1>' + 'Data Search Platform' + '</h1>' +
+     '<li>User can search city keyword here! </li>' +
      '<li>User link : <a href="http://localhost:3000/searching-function">http://localhost:3000/searching-function</a></li>' +
      '</ul>' + '</body></html>';
      res.writeHead(200,{'content-type': 'text/html'}); res.write(str);
