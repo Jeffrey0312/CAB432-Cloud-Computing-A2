@@ -27,7 +27,7 @@ router.get('/', function (req, res, next) {
     const twitterRequest = axios.get(`https://api.twitter.com/2/tweets/search/recent?query=${query}`,
         {
             headers: {
-                'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAAJDyUwEAAAAATIzY%2BqFHF79dTdzc%2BkvQvtXVnuM%3DfQBgsZPOvHSUSa6eC2o5ouxeZnWyWhmRB4DixIlUyVIN4KptPk'
+                'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAAHdxVgEAAAAAwX3baHgzlD8QTXRYr0A3%2FtK8QuE%3DIJMSbJ4K5PNrT7sCQbrfcwcHMpW8SQHSqdcMERU6IIqQBPyeS3'
             }
         });
     const weatherRequest = axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${query}&appid=40280448ac5cd05b973956bf4a7fc3a6&units=metric`);
